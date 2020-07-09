@@ -1,13 +1,5 @@
-﻿using SimpleActor.Core;
-using System;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SimpleActor.HelloWorld
+﻿namespace SimpleActor.HelloWorld
 {
-
-
-public sealed class GetStateMsg
-{ }
-
+    public sealed class GetStateMsg
+    { }
 }
