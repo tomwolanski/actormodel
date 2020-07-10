@@ -1,13 +1,13 @@
 ﻿using ActorSystem.Core.Supervision;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading.Channels;
 
 namespace ActorSystem.Core
 {
 	public abstract class SupervisingActorBase : SupervisedActorBase
 	{
-		private readonly Dictionary<SupervisedActorBase, Func<SupervisedActorBase>> _children = new Dictionary<SupervisedActorBase, Func<SupervisedActorBase>>();
+		private readonly ConcurrentDictionary<SupervisedActorBase, Func<SupervisedActorBase>> _children = new ConcurrentDictionary<SupervisedActorBase, Func<SupervisedActorBase>>();
 
 		protected SupervisingActorBase(ActorRef self, ActorRef parent, ChannelReader<(object, ActorRef)> mailbox, ActorExceptionCallback exceptionCallback)
 			: base(self, parent, mailbox, exceptionCallback)
@@ -23,7 +23,7 @@ namespace ActorSystem.Core
 			var childFactory = new Func<SupervisedActorBase>(() => actorBuilder(ctx));
 
 			var child = childFactory();
-			_children.Add(child, childFactory);
+			_children.TryAdd(child, childFactory);
 			child.Start();
 
 			return reference;
@@ -31,7 +31,7 @@ namespace ActorSystem.Core
 
 		protected override void OnStopped()
 		{
-			_children.Keys.ForEach(child => child.Stop());
+			_children.ForEach(child => child.Key.Stop());
 			base.OnStopped();
 		}
 
@@ -39,6 +39,7 @@ namespace ActorSystem.Core
 
 		private void ChildActorExceptionCallback(SupervisedActorBase child, object message, ActorRef sender, Exception ex)
 		{
+			var childId = child.Self.Id;
 			var strategy = OnChildException(message, ex);
 
 			switch (strategy)
@@ -50,17 +51,16 @@ namespace ActorSystem.Core
 				case ExceptionHandelingStrategy.KillChild:
 					{
 						child.Stop();
-						_children.Remove(child);
+						_children.TryRemove(child, out var _);
 						break;
 					}
 				case ExceptionHandelingStrategy.RestartChild:
 					{
-						var childFactory = _children[child];
 						child.Stop();
-						_children.Remove(child);
+						_children.TryRemove(child, out var childFactory);
 
 						var newChild = childFactory();
-						_children.Add(newChild, childFactory);
+						_children.TryAdd(newChild, childFactory);
 						newChild.HandleMessage(message, sender);
 						newChild.Start();
 

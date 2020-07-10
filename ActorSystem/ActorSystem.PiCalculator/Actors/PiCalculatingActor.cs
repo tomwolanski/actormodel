@@ -43,6 +43,6 @@ namespace ActorSystem.PiCalculator.Actors
 			}
 		}
 
-		// protected override ExceptionHandelingStrategy OnChildException(object message, Exception ex) => ExceptionHandelingStrategy.RestartChild;
+		//protected override ExceptionHandelingStrategy OnChildException(object message, Exception ex) => ExceptionHandelingStrategy.RestartChild;
 	}
 }

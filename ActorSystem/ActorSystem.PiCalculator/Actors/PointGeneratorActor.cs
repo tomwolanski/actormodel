@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ActorSystem.Core;
 using ActorSystem.PiCalculator.Messages;
 
@@ -10,7 +11,7 @@ namespace ActorSystem.PiCalculator.Actors
 
 		public PointGeneratorActor(ActorContext ctx) : base(ctx)
 		{
-			_rnd = new Random(Environment.TickCount * Self.Id.GetHashCode());
+			_rnd = new Random(Environment.TickCount + Self.Id.GetHashCode());
 		}
 
 		protected override void OnStarted()
@@ -25,12 +26,15 @@ namespace ActorSystem.PiCalculator.Actors
 			var y = _rnd.NextDouble();
 			var r = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
 
-			// if (x > 0.9 && y > 0.9) throw new Exception("DUMMY"); // uncomment to simulate failure scenario
-
 			var msg = new PointMsg(x, y, r <= 1);
 			Parent.Tell(msg, Self);
+			Self.ScheduleMessage(5, new GenerateNextPointMsg(), Self);
 
-			Self.Tell(new GenerateNextPointMsg(), Self);
+			//if (x > 0.999) // uncomment to simulate failure scenario
+			//{
+			//	Console.WriteLine($"{Self.Id} throwing exception...");
+			//	throw new Exception("DUMMY");
+			//}
 		}
 	}
 }

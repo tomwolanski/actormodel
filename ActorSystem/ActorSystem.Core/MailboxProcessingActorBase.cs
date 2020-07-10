@@ -24,9 +24,9 @@ namespace ActorSystem.Core
 
 		protected abstract void OnMessage(object message, ActorRef sender);
 
-		protected virtual void OnStarted() {}
+		protected virtual void OnStarted() => Console.WriteLine($"{Self.Id} started");
 
-		protected virtual void OnStopped() {}
+		protected virtual void OnStopped() => Console.WriteLine($"{Self.Id} stopped");
 
 		protected internal virtual void HandleMessage(object message, ActorRef sender) => OnMessage(message, sender);
 
