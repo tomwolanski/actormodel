@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ActorSystem.Core;
+using ActorSystem.Core.Supervision;
 using ActorSystem.PiCalculator.Messages;
 
 namespace ActorSystem.PiCalculator.Actors
@@ -41,5 +42,7 @@ namespace ActorSystem.PiCalculator.Actors
 					}
 			}
 		}
+
+		// protected override ExceptionHandelingStrategy OnChildException(object message, Exception ex) => ExceptionHandelingStrategy.RestartChild;
 	}
 }

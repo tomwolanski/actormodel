@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace SimpleActor.HelloWorld
 {
-    static class Program
-    {
-        public static async Task Main()
+	static class Program
+	{
+		public static async Task Main()
 		{
 			var actor = GetActor();
 
@@ -42,5 +42,5 @@ namespace SimpleActor.HelloWorld
 				}
 			});
 		}
-    }
+	}
 }

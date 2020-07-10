@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
@@ -23,9 +24,9 @@ namespace ActorSystem.Core
 
 		protected abstract void OnMessage(object message, ActorRef sender);
 
-		protected virtual void OnStarted() { }
+		protected virtual void OnStarted() {}
 
-		protected virtual void OnStopped() { }
+		protected virtual void OnStopped() {}
 
 		protected internal virtual void HandleMessage(object message, ActorRef sender) => OnMessage(message, sender);
 
@@ -33,10 +34,10 @@ namespace ActorSystem.Core
 		{
 			OnStarted();
 
-			await foreach (var pair in _mailbox.ReadAllAsync().WithCancellation(_cancelTokenSrc.Token))
+			while( !_cancelTokenSrc.Token.IsCancellationRequested )
 			{
-				var (message, sender) = pair;
-				OnMessage(message, sender);
+				var (message, sender) = await _mailbox.ReadAsync(_cancelTokenSrc.Token);
+				HandleMessage(message, sender);
 			}
 
 			OnStopped();
