@@ -1,6 +1,6 @@
 ﻿namespace ActorSystem.Core.Supervision
 {
-	public enum ExceptionHandelingStrategy
+	public enum ExceptionHandlingStrategy
 	{
 		SkipMessage,
 		KillChild,

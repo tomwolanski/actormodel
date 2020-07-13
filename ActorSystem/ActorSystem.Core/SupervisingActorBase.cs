@@ -35,7 +35,7 @@ namespace ActorSystem.Core
 			base.OnStopped();
 		}
 
-		protected virtual ExceptionHandelingStrategy OnChildException(object message, Exception ex) => ExceptionHandelingStrategy.SkipMessage;
+		protected virtual ExceptionHandlingStrategy OnChildException(object message, Exception ex) => ExceptionHandlingStrategy.SkipMessage;
 
 		private void ChildActorExceptionCallback(SupervisedActorBase child, object message, ActorRef sender, Exception ex)
 		{
@@ -44,17 +44,17 @@ namespace ActorSystem.Core
 
 			switch (strategy)
 			{
-				case ExceptionHandelingStrategy.SkipMessage:
+				case ExceptionHandlingStrategy.SkipMessage:
 					{
 						break;
 					}
-				case ExceptionHandelingStrategy.KillChild:
+				case ExceptionHandlingStrategy.KillChild:
 					{
 						child.Stop();
 						_children.TryRemove(child, out var _);
 						break;
 					}
-				case ExceptionHandelingStrategy.RestartChild:
+				case ExceptionHandlingStrategy.RestartChild:
 					{
 						child.Stop();
 						_children.TryRemove(child, out var childFactory);
