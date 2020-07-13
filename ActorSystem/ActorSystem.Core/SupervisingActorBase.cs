@@ -39,7 +39,6 @@ namespace ActorSystem.Core
 
 		private void ChildActorExceptionCallback(SupervisedActorBase child, object message, ActorRef sender, Exception ex)
 		{
-			var childId = child.Self.Id;
 			var strategy = OnChildException(message, ex);
 
 			switch (strategy)

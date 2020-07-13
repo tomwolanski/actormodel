@@ -14,8 +14,7 @@ namespace ActorSystem.Core
 			var id = $"$.{name}";
 			var mailbox = Channel.CreateUnbounded<(object, ActorRef)>();
 			var reference = new ActorRef(id, mailbox.Writer);
-			var ctx = new ActorContext(id, reference, ActorRef.Empty, mailbox.Reader,
-				ChildActorExceptionCallback);
+			var ctx = new ActorContext(id, reference, ActorRef.Empty, mailbox.Reader, ChildActorExceptionCallback);
 
 			var child = actorBuilder(ctx);
 			_children.Add(child);
